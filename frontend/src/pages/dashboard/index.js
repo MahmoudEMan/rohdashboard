@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FlexBetween } from "UI/FlexPs";
 import PageHeader from "components/PageHeader/PageHeader";
 import {
@@ -27,9 +27,10 @@ const Dashboard = () => {
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data, isLoading } = useGetDashboardQuery();
+  const [loadingExcel, setLoadingExcel] = useState(false);
 
   const generateExcel = async () => {
-    console.log(data);
+    setLoadingExcel(true);
     const workbook = new ExcelJS.Workbook();
     const monthlySheet = workbook.addWorksheet("Monthly Data");
     const categorySheet = workbook.addWorksheet("Sales by Category");
@@ -69,6 +70,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error generating Excel:", error);
     }
+    setLoadingExcel(false);
   };
 
   const columns = [
@@ -110,18 +112,19 @@ const Dashboard = () => {
           <Button
             sx={{
               backgroundColor: theme.palette.secondary.light,
-              color: theme.palette.background.alt,
+              // color: theme.palette.background.alt,
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
             }}
+            disabled={loadingExcel}
             onClick={() => {
               console.log("zed");
               generateExcel();
             }}
           >
             <DownloadOutlined sx={{ mr: "10px" }} />
-            Download Reports
+            {loadingExcel ? "Wait..." : "Download Reports"}
           </Button>
         </Box>
       </FlexBetween>
