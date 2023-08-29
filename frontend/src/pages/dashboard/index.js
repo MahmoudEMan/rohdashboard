@@ -20,11 +20,56 @@ import BreakdownChart from "components/BreakdownChart/BreakdownChart";
 import OverviewChart from "components/OverviewChart/OverviewChart";
 import { useGetDashboardQuery } from "store/api";
 import StatBox from "components/StatBox/StatBox";
+import * as ExcelJS from "exceljs";
+import saveAs from "file-saver";
 
 const Dashboard = () => {
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data, isLoading } = useGetDashboardQuery();
+
+  const generateExcel = async () => {
+    console.log(data);
+    const workbook = new ExcelJS.Workbook();
+    const monthlySheet = workbook.addWorksheet("Monthly Data");
+    const categorySheet = workbook.addWorksheet("Sales by Category");
+
+    try {
+      if (data.monthlyData) {
+        monthlySheet.addRow(["Month", "Total Sales", "Total Units"]);
+        data.monthlyData.forEach((entry) => {
+          monthlySheet.addRow([
+            entry.month,
+            entry.totalSales,
+            entry.totalUnits,
+          ]);
+        });
+      }
+
+      if (data.salesByCategory) {
+        categorySheet.addRow(["Category", "Total Sales"]);
+        Object.entries(data.salesByCategory).forEach(([category, sales]) => {
+          categorySheet.addRow([category, sales]);
+        });
+      }
+
+      const currentDate = new Date();
+      const formattedDate = currentDate.toISOString().slice(0, 10);
+      const fileName = `data_${formattedDate}.xlsx`;
+
+      const excelBuffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      link.click();
+    } catch (error) {
+      console.error("Error generating Excel:", error);
+    }
+  };
 
   const columns = [
     {
@@ -69,6 +114,10 @@ const Dashboard = () => {
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
+            }}
+            onClick={() => {
+              console.log("zed");
+              generateExcel();
             }}
           >
             <DownloadOutlined sx={{ mr: "10px" }} />
