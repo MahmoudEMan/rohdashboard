@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*{
+  box-sizing: border-box;
+}
+html,
+body,
+#root,
+.app {
+  height: 100%;
+  width: 100%;
+  font-family: "Inter", sans-serif;
+}
+.fcen{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fbet{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* ::-webkit-scrollbar {
+  width: 5px;
+  margin: 0 1px;
+  height: 5px;
+  transform: scaleY(0.5);
+} */
+
+
+/* Track */
+::-webkit-scrollbar-track {
+  background:transparent; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
